@@ -1,0 +1,9 @@
+name: airkiss
+version: 1.0.0
+description: A dart airkiss lib.
+author: sintrb <sintrb@gmail.com>
+homepage: https://github.com/sintrb/dart-airkiss
+documentation: https://github.com/sintrb/dart-airkiss
+environment:
+  sdk: '>=2.0.0 <3.0.0'
+publish_to: https://pub.dartlang.org
