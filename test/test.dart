@@ -16,7 +16,5 @@ void test(String ssid, String pwd) async {
 }
 
 void main() {
-  test("IR-TEST", "ir123456");
+  test("IRCN", "qwe123!@#");
 }
-
-

@@ -3,7 +3,7 @@
 library airkiss;
 
 import 'dart:io'
-    show RawDatagramSocket, InternetAddress, NetworkInterface, Datagram;
+    show RawDatagramSocket, InternetAddress, Datagram;
 import 'dart:async';
 import 'dart:convert';
 
@@ -95,7 +95,6 @@ class AirkissUtils {
 class AirkissEncoder {
   List<List<int>> encode(String ssid, String pwd, {int random: 0x56}) {
     var strEncoder = Utf8Encoder();
-    List<int> bytes = [];
     List<int> ssidbts = strEncoder.convert(ssid);
     List<int> pwdbts = strEncoder.convert(pwd);
     return this.encodeWithBytes(ssidbts, pwdbts, random: random);
@@ -103,7 +102,6 @@ class AirkissEncoder {
 
   List<List<int>> encodeWithBytes(List<int> ssidbts, List<int> pwdbts,
       {int random: 0x56}) {
-    var strEncoder = Utf8Encoder();
     List<int> bytes = [];
     bytes.addAll(AirkissUtils.leadingPart());
     bytes.addAll(AirkissUtils.magicCode(ssidbts, pwdbts));
@@ -117,7 +115,7 @@ class AirkissEncoder {
       for (int j = 0; j < data.length; j += 4) {
         int end = min(j + 4, data.length);
         List<int> content = data.getRange(j, end).toList();
-        bytes.addAll(AirkissUtils.sequence((j / 4).toInt(), content));
+        bytes.addAll(AirkissUtils.sequence(j ~/ 4, content));
       }
     }
     List<List<int>> bytesArray = [];
