@@ -1,6 +1,6 @@
 # dart-airkiss
 
-[![pub package](https://img.shields.io/pub/v/url_launcher.svg)](https://pub.dartlang.org/packages/url_launcher)
+[![pub package](https://img.shields.io/pub/v/airkiss.svg)](https://pub.dev/packages/airkiss)
 
 A dart wechat airkiss lib to config IOT device.
 
