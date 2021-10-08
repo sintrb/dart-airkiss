@@ -8,7 +8,7 @@ A dart wechat airkiss lib to config IOT device.
 To use this plugin, add `airkiss` as a dependency in your [pubspec.yaml](https://flutter.io/platform-plugins/) file.
 ```yaml
 dependencies:
-  airkiss: ^1.0.0
+  airkiss: ^1.0.1
 ```
 
 
