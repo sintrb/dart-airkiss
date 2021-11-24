@@ -16,5 +16,10 @@ void test(String ssid, String pwd) async {
 }
 
 void main() {
-  test("IRCN", "qwe123!@#");
+  // test("呵呵 你连不上", "r1592518");
+// test("NOT-CMCC", "qwe123!@#");
+// test("IRCN", "qwe123!@#");
+    // test("IR-TEST", "ir123456");
+//    test("CMCC-urZZ", "yc4b5czz");
+test("201", "zhencheng15125653266");
 }

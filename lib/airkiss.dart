@@ -2,8 +2,7 @@
 
 library airkiss;
 
-import 'dart:io'
-    show Datagram, InternetAddress, Platform, RawDatagramSocket;
+import 'dart:io' show RawDatagramSocket, InternetAddress, Datagram;
 import 'dart:async';
 import 'dart:convert';
 
@@ -13,6 +12,8 @@ class AirkissOption {
   int trycount = 50;
   int timegap = 1000;
   int random = 0x55;
+  bool reuseAddress = true;
+  bool reusePort = true;
 }
 
 class AirkissUtils {
@@ -56,8 +57,7 @@ class AirkissUtils {
     magicCode[2] = 0x20 | (crc8 >> 4 & 0xF);
     magicCode[3] = 0x30 | (crc8 & 0xF);
     for (int i = 0; i < 20; ++i) {
-      for (int j = 0; j < 4; ++j)
-        data.add(magicCode[j]);
+      for (int j = 0; j < 4; ++j) data.add(magicCode[j]);
     }
     return data;
   }
@@ -129,8 +129,7 @@ class AirkissEncoder {
 }
 
 class AirkissResult {
-  InternetAddress? deviceAddress; // 设备地址
-
+  InternetAddress deviceAddress; // 设备地址
 
   String toString() {
     return 'deviceAddress:$deviceAddress';
@@ -139,7 +138,7 @@ class AirkissResult {
 
 class AirkissSender {
   var cbk;
-  RawDatagramSocket? _soc;
+  RawDatagramSocket _soc;
   AirkissOption option;
 
   AirkissSender(this.option) {
@@ -152,13 +151,12 @@ class AirkissSender {
 
   void send(List<List<int>> bytesArray) async {
     assert(cbk != null);
-    RawDatagramSocket.bind(
-        InternetAddress.anyIPv4, option.receive_port,
-        reuseAddress: true, reusePort: Platform.isAndroid ? false : true)
+    RawDatagramSocket.bind(InternetAddress.anyIPv4, option.receive_port,
+            reuseAddress: option.reuseAddress, reusePort: option.reusePort)
         .then((soc) {
       this._soc = soc;
       soc.listen((e) {
-        Datagram? dg = soc.receive();
+        Datagram dg = soc.receive();
         if (dg != null) {
           List<int> rbytes = dg.data.toList();
           if (rbytes.length > 0 && rbytes[0] == option.random) {
@@ -196,20 +194,21 @@ class AirkissSender {
           }
         }
       }
+
       _send();
     });
   }
 
   void stop() {
     if (this._soc != null) {
-      this._soc!.close();
+      this._soc.close();
       this._soc = null;
     }
   }
 }
 
 class AirkissConfig {
-  AirkissOption? option;
+  AirkissOption option;
 
   AirkissConfig({this.option}) {
     if (this.option == null) {
@@ -224,12 +223,12 @@ class AirkissConfig {
     return this.configWithBytes(ssidbts, pwdbts);
   }
 
-  Future<AirkissResult> configWithBytes(List<int> ssidbts,
-      List<int> pwdbts) async {
+  Future<AirkissResult> configWithBytes(
+      List<int> ssidbts, List<int> pwdbts) async {
     Completer<AirkissResult> completer = Completer();
-    var bytes = AirkissEncoder().encodeWithBytes(
-        ssidbts, pwdbts, random: option!.random);
-    var sender = AirkissSender(this.option!);
+    var bytes = AirkissEncoder()
+        .encodeWithBytes(ssidbts, pwdbts, random: option.random);
+    var sender = AirkissSender(this.option);
     sender
       ..onFinished((res) {
         sender.stop();
