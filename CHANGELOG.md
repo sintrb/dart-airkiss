@@ -4,4 +4,4 @@
 
 ## 1.0.2
 
-* Add reuseAddress and reusePort to AirkissOption Class.
+* Add reuse_address and reuse_port to AirkissOption Class.

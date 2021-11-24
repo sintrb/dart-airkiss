@@ -12,8 +12,8 @@ class AirkissOption {
   int trycount = 50;
   int timegap = 1000;
   int random = 0x55;
-  bool reuseAddress = true;
-  bool reusePort = true;
+  bool reuse_address = true;
+  bool reuse_port = true;
 }
 
 class AirkissUtils {
@@ -152,7 +152,7 @@ class AirkissSender {
   void send(List<List<int>> bytesArray) async {
     assert(cbk != null);
     RawDatagramSocket.bind(InternetAddress.anyIPv4, option.receive_port,
-            reuseAddress: option.reuseAddress, reusePort: option.reusePort)
+            reuseAddress: option.reuse_address, reusePort: option.reuse_port)
         .then((soc) {
       this._soc = soc;
       soc.listen((e) {
