@@ -3,7 +3,7 @@
 library airkiss;
 
 import 'dart:io'
-    show RawDatagramSocket, InternetAddress, Datagram;
+    show Datagram, InternetAddress, Platform, RawDatagramSocket;
 import 'dart:async';
 import 'dart:convert';
 
@@ -129,7 +129,7 @@ class AirkissEncoder {
 }
 
 class AirkissResult {
-  InternetAddress deviceAddress; // 设备地址
+  InternetAddress? deviceAddress; // 设备地址
 
 
   String toString() {
@@ -139,7 +139,7 @@ class AirkissResult {
 
 class AirkissSender {
   var cbk;
-  RawDatagramSocket _soc;
+  RawDatagramSocket? _soc;
   AirkissOption option;
 
   AirkissSender(this.option) {
@@ -154,11 +154,11 @@ class AirkissSender {
     assert(cbk != null);
     RawDatagramSocket.bind(
         InternetAddress.anyIPv4, option.receive_port,
-        reuseAddress: true, reusePort: true)
+        reuseAddress: true, reusePort: Platform.isAndroid ? false : true)
         .then((soc) {
       this._soc = soc;
       soc.listen((e) {
-        Datagram dg = soc.receive();
+        Datagram? dg = soc.receive();
         if (dg != null) {
           List<int> rbytes = dg.data.toList();
           if (rbytes.length > 0 && rbytes[0] == option.random) {
@@ -202,14 +202,14 @@ class AirkissSender {
 
   void stop() {
     if (this._soc != null) {
-      this._soc.close();
+      this._soc!.close();
       this._soc = null;
     }
   }
 }
 
 class AirkissConfig {
-  AirkissOption option;
+  AirkissOption? option;
 
   AirkissConfig({this.option}) {
     if (this.option == null) {
@@ -228,8 +228,8 @@ class AirkissConfig {
       List<int> pwdbts) async {
     Completer<AirkissResult> completer = Completer();
     var bytes = AirkissEncoder().encodeWithBytes(
-        ssidbts, pwdbts, random: option.random);
-    var sender = AirkissSender(this.option);
+        ssidbts, pwdbts, random: option!.random);
+    var sender = AirkissSender(this.option!);
     sender
       ..onFinished((res) {
         sender.stop();
